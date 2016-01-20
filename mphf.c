@@ -22,6 +22,13 @@ struct freq_tree {
         char *str;
 };
 
+struct freq_char {
+	unsigned char c;
+	unsigned char freq;
+};
+
+struct freq_char *freq_of_char_in_order[MAX_CHAR_NUM] = {NULL};
+
 struct freq_tree *tree_root = NULL;
 
 struct freq_tree *insert_into_tree(char *instring)
@@ -83,7 +90,7 @@ struct freq_tree *insert_into_tree(char *instring)
 }
 
 
-int calc_string(char *one_str)
+void calc_string(char *one_str)
 {
 	int num = strlen(one_str);
 	int key = num + (*one_str - 'a') + (*(one_str + num - 1) - 'a');
@@ -117,10 +124,76 @@ void print_freq_by_tree(struct freq_tree *fnode)
 	
 }
 
+void swap(struct freq_char **first, struct freq_char **second)
+{
+	long temp = *first; 
+	*first = *second;
+	*second = (struct freq_char *)temp;
+}
+
+void qsort_freq(int mid_pos, int num)
+{
+	int i = 0;
+	int m = mid_pos;
+	struct freq_char *tmp = NULL;
+	
+	if (mid_pos >= num) {
+		return;
+	}
+
+	for (i = mid_pos + 1; i < num; i++) {
+		if (freq_of_char_in_order[i]->freq < freq_of_char_in_order[mid_pos]->freq) {
+			swap(&freq_of_char_in_order[++m], &freq_of_char_in_order[i]);
+		}
+	}
+	
+	for (i = 0; i < MAX_CHAR_NUM; i++) {
+		printf("%d ", freq_of_char_in_order[i]->freq);
+	}
+	printf("\n");
+	printf("mid_pos = %d, m = %d\n", mid_pos, m);
+	swap(&freq_of_char_in_order[mid_pos], &freq_of_char_in_order[m]);
+
+	for (i = 0; i < MAX_CHAR_NUM; i++) {
+		printf("%d ", freq_of_char_in_order[i]->freq);
+	}
+	printf("\n");
+	printf("%d, %d\n", mid_pos, m - 1);
+	qsort_freq(mid_pos, m - 1);
+	qsort_freq(m + 1, num);
+}
+
 void order_freq()
 {
 	int i = 0;
-	for (;i < sizeof(static_site)/sizeof(char *); i++) {
+	struct freq_char *fc = NULL;
+	/* we need to order char by freq. */
+	for (; i < MAX_CHAR_NUM; i++) {
+		fc = (struct freq_char *)malloc(sizeof(struct freq_char));
+		if (fc == NULL) {
+			printf("malloc error!\n");
+			exit(-1);
+		}
+		fc->freq = freq_of_char[i];
+		fc->c = i + 'a';
+		freq_of_char_in_order[i] = fc;
+	}
+
+
+	/* just for test */
+	for (i = 0; i < MAX_CHAR_NUM; i++) {
+		fc = freq_of_char_in_order[i];
+		printf("---->%c = %d\n", fc->c, fc->freq);
+	}
+	qsort_freq(0, MAX_CHAR_NUM);
+
+	for (i = 0; i < MAX_CHAR_NUM; i++) {
+		fc = freq_of_char_in_order[i];
+		printf("----> new %c = %d\n", fc->c, fc->freq);
+	}
+	
+	/* ordering string by char's freq. */
+	for (i = 0;i < sizeof(static_site)/sizeof(char *); i++) {
 		insert_into_tree(static_site[i]);
 	}
 }
