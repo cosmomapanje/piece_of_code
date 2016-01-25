@@ -146,12 +146,36 @@ void order_freq_of_word()
 	
 }
 
+char check_collision(char num)
+{
+	int i = 0;
+	for (; i < num; i++) {
+		if (ssp[i]->key_value == ssp[num]->key_value) {
+			printf("%s, %s collision\n", ssp[i]->str, ssp[num]->str);
+			return 1;
+		}
+	}
+	return 0;
+}
+
 void processing_char()
 {
 	int i = 0;
+	char c_c = 0; // current char
 	for (; i < MAX_KEY_WORD; i++) {
 		ssp[i]->key_value = freq_of_char_in_alph[ssp[i]->char1 - 'a']->key + freq_of_char_in_alph[ssp[i]->char2 - 'a']->key + ssp[i]->strlengh;
 		printf("[%s = %c ... %d ... %c] = %d\n", ssp[i]->str, ssp[i]->char1, ssp[i]->strlengh, ssp[i]->char2, ssp[i]->key_value);
+	}
+
+	for (i = 0; i < MAX_KEY_WORD; i++) {
+		check_collision(i);
+#if 0
+		if (c_c == ssp[i]->char1) {
+			
+		} else if (c_c == ssp[i]->char2) {
+
+		}
+#endif
 	}
 }
 
