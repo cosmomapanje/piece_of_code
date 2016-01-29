@@ -14,7 +14,7 @@ static char *static_site[] = {"do", "end", "else", "case", "downto", "goto",
 			      "var", "in", "array", "if", "nil", "for",
 			      "begin", "until", "label", "function", "program"};
 
-char *static_site_in_order[MAX_KEY_WORD] = {NULL}; 
+char *static_site_in_order[MAX_KEY_WORD] = {NULL};
 
 struct static_sites {
 	char char1;
@@ -45,6 +45,7 @@ struct freq_char {
 
 struct freq_char *freq_of_char_in_order[MAX_CHAR_NUM] = {NULL};
 struct freq_char *freq_of_char_in_alph[MAX_CHAR_NUM] = {NULL};
+struct freq_char *c_c = freq_of_char_in_order;
 
 void calc_string(char *one_str)
 {
@@ -150,12 +151,25 @@ char check_collision(char num)
 {
 	int i = 0;
 	for (; i < num; i++) {
+		//printf("<%s> <%s>\n", ssp[i]->str, ssp[num]->str);
 		if (ssp[i]->key_value == ssp[num]->key_value) {
-			printf("%s, %s collision\n", ssp[i]->str, ssp[num]->str);
+			//printf("-------->%s, %s collision\n", ssp[i]->str, ssp[num]->str);
 			return 1;
 		}
 	}
 	return 0;
+}
+
+char update_keyvalue(int i)
+{
+
+	while (check_collision(i)) {
+		/*
+		 * We should update key value here
+		 * And we need to check collision once we update key value
+		 */
+		ssp[i]->key_value = ssp[i]->key_value + 1;
+	}
 }
 
 void processing_char()
@@ -168,7 +182,7 @@ void processing_char()
 	}
 
 	for (i = 0; i < MAX_KEY_WORD; i++) {
-		check_collision(i);
+		update_keyvalue(i);
 #if 0
 		if (c_c == ssp[i]->char1) {
 			
@@ -176,6 +190,9 @@ void processing_char()
 
 		}
 #endif
+	}
+	for (i = 0; i < MAX_KEY_WORD; i++) {
+		printf("[%s = %c ... %d ... %c] = %d\n", ssp[i]->str, ssp[i]->char1, ssp[i]->strlengh, ssp[i]->char2, ssp[i]->key_value);
 	}
 }
 
