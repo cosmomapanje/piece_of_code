@@ -21,7 +21,7 @@ fun is_older ((d1 : int, m1 : int, y1 : int), (d2 : int, m2 : int, y2 : int)) =
 
 
 (* 2 : number_in_month *)
-val test_list = [(1,2,3), (2,3,4), (3,4,5), (3,2,4), (3,3,3), (3,2,3)]
+val test_list = [(1,2,1990), (2,3,1987), (3,4,1986), (3,2,1990), (3,3,1980), (3,2,1989)]
 fun number_in_month (m : (int * int * int) list, x : int) = 
   if null m
   then 0
@@ -78,6 +78,36 @@ fun what_month (x : int) =
 
 (* 10 : month_range *)
 (* 11 : oldest *)
+fun oldest (dl : (int * int * int) list) =
+  if null dl
+  then NONE
+  else let
+	  fun oldest_noempty (ne_dl : (int * int * int) list) =
+		if null (tl ne_dl)
+		then hd ne_dl
+		else let val od = oldest_noempty (tl ne_dl)
+			 in
+				 if is_older(od, hd ne_dl)
+				 then od
+				 else hd ne_dl
+			 end
+  in
+	  SOME(oldest_noempty dl)
+  end
+
 (* 12 : cumulative_sum *)
+fun cumulative_sum (il : int list) =
+  if null il
+  then []
+  else let
+	  fun cumulative_sum_helper (x : int, il : int list) =
+		if null il
+		then []
+		else (x + hd il) :: cumulative_sum_helper(x + hd il, tl il)
+  in
+	  cumulative_sum_helper(0, il)
+  end
+		
+		
 (* 13 : number_in_months_challenge / dates_in_months_challenge *)
 (* 14 : reasonable_date*)
