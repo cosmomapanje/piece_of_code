@@ -83,3 +83,10 @@ fun occurs(a, Bud)
 	  else occurs(a, t)
   | occurs(a, Split(s, t))
 	= occurs(a, s) + occurs(a, t)
+
+datatype 'a slist =
+		 Empty
+		 | Scons of (('a sexp) * ('a slist))
+	 and 'a sexp =
+		 An_atom of 'a
+		 | A_slist of ('a slist)
